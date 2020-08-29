@@ -12,7 +12,7 @@ class Block:
         self.timestamp = timestamp
         self.previous_hash = previous_hash
 
-    def compute_hash(self, block):
+    def compute_hash(self):
         block_string = json.dumps(self.__dict__, sort_keys=True)
         return sha256(block_string.encode()).hexdigest()
 
@@ -32,6 +32,17 @@ class Blockchain:
     @property
     def last_block(self):
         return self.chain[-1]
+
+    def print_block(self, n):
+        if len(self.chain) < n:
+            return
+        else:
+            block = self.chain[n]
+            return f'Index: {block.index}\nTransactions: {block.transactions}\nTimestamp: {block.timestamp}\nPrevious hash: {block.previous_hash}'
+
+
+a = Blockchain()
+print(a.print_block(0))
 
     
 
