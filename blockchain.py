@@ -51,12 +51,20 @@ class Blockchain:
             computed_hash = block.compute_hash()
         return computed_hash
 
+    def add_block(self, proof):
+        previous_hash = self.last_block.hash
+
+        if previous_hash != block.previous_hash:
+            return False
+        if not self.is_valid_proof(block, proof):
+            return False
+
+        block.hash = proof
+        self.chain.append(block)
+        return True
+
+    def is_valid_proof(self, block, block_hash):
+        return (block_hash.startswith('0'*Blockchain.difficulty) and block_hash == block.compute_hash())
 
 
-
-
-a = Blockchain()
-print(a.print_block(0))
-
-    
 
