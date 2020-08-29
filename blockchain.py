@@ -62,8 +62,22 @@ class Blockchain:
         self.chain.append(block)
         return True
 
+    @classmethod
     def is_valid_proof(self, block, block_hash):
         return (block_hash.startswith('0'*Blockchain.difficulty) and block_hash == block.compute_hash())
+
+    @classmethod
+    def check_chain_validity(self, clss, chain):
+        result = True
+        previous_hash = '0'
+        for block in chain:
+            block_hash = block.hash
+            delattr(block, 'hash')
+            if not clss.is_valid_proof(block, block.hash) or previous_hash != block.previous_hash:
+                result = False
+                break
+            block.hash, previous_hash = block_hash, block_hash
+        return result
 
     def new_transaction(self, transaction):
         self.unconfirmed_transactions.append(transaction)
@@ -129,4 +143,4 @@ def get_pending_tx():
 
 
 
-
+app.run(port=8000)
