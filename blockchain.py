@@ -2,6 +2,8 @@
 import json
 import time
 from hashlib import sha256
+from flask import Flask, request
+import requests
 
 
 class Block:
@@ -45,12 +47,12 @@ class Blockchain:
     def proof_of_work(self, block):
         block.nonce = 0
         computed_hash = block.compute_hash()
-        while not computed_hash.startswith('0'*.Blockchain.difficulty):
+        while not computed_hash.startswith('0'*Blockchain.difficulty):
             block.nonce += 1
             computed_hash = block.compute_hash()
         return computed_hash
 
-    def add_block(self, proof):
+    def add_block(self, block, proof):
         previous_hash = self.last_block.hash
         if previous_hash != block.previous_hash:
             return False
@@ -75,4 +77,31 @@ class Blockchain:
         self.add_block(new_block, proof)
         self.unconfirmed_transactions = []
         return new_block.index
+
+# #- prueba
+# a = Blockchain()
+# a.new_transaction('tran1 sdfsdfs')
+# a.new_transaction('tran2 hjdtn')
+# a.mine()
+# len_bc = len(a.chain)
+# print(a.print_block(len_bc-1))
+
+
+app = Flask(__name__)
+blockchain = Blockchain()
+
+@app.route('/new_transaction', methods['POST'])
+    def new_transaction():
+        tx_data = request.get_json()
+        require_fields = ["author", "content"]
+
+        for field in require_fields:
+            if not tx_data.get(field):
+                return 'Datos de transaccion invalidos', 404
+
+        tx_data["timestamp"] = time.time()
+        blockchain.new_transaction(tx_data)
+        return 'Exito', 201
+
+
 
